@@ -1,6 +1,6 @@
-from flask import Flask, request, render_template, redirect
+from flask import Flask, request, render_template, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
-
+from werkzeug.security import generate_password_hash, check_password_hash
 import os
 
 project_dir = os.path.dirname(os.path.abspath(__file__))
@@ -37,9 +37,21 @@ def sign_up():
         email = request.form["email"]
         password = request.form["password"]
 
-        print(username)
-        print(email)
-        print(password)
+        user = User.query.filter_by(email=email).first()
+
+        if user:
+            return redirect(url_for('sign_up'))
+
+        hashed_password = generate_password_hash(password, method='sha256')
+
+        print(hashed_password)
+
+        new_user = User(username=username, email=email, password=hashed_password)
+
+        print(new_user)
+
+        db.session.add(new_user)
+        db.session.commit()
 
 
     return render_template('signup.html')
