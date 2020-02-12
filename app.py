@@ -1,6 +1,7 @@
 from flask import Flask, request, render_template, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin, LoginManger, login_user, logout_user, login_required, current_user
 import os
 
 project_dir = os.path.dirname(os.path.abspath(__file__))
@@ -16,7 +17,12 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 
-class User(db.Model):
+login_manager = LoginManager()
+login_manager.login_view = 'sign_in'
+login_manager.init_app(app)
+
+
+class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100))
     email = db.Column(db.String(100), unique=True)
@@ -64,8 +70,9 @@ def sign_in():
         email = request.form["email"]
         password = request.form["password"]
 
-        print(email)
-        print(password)
+        user = User.query.filter_by(email=email).first()
+
+        print(user)
 
     return render_template('signin.html')
 
