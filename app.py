@@ -1,7 +1,7 @@
 from flask import Flask, request, render_template, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import UserMixin, LoginManger, login_user, logout_user, login_required, current_user
+from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required, current_user
 import os
 
 project_dir = os.path.dirname(os.path.abspath(__file__))
@@ -20,6 +20,10 @@ db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.login_view = 'sign_in'
 login_manager.init_app(app)
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 
 class User(UserMixin, db.Model):
@@ -72,7 +76,13 @@ def sign_in():
 
         user = User.query.filter_by(email=email).first()
 
-        print(user)
+        if not user or not check_password_hash(user.password, password):
+            return redirect(url_for('sign_in'))
+
+        login_user(user)
+
+        return redirect(url_for('index'))
+
 
     return render_template('signin.html')
 
