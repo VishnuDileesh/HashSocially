@@ -81,10 +81,26 @@ def sign_in():
 
         login_user(user)
 
-        return redirect(url_for('index'))
+        return redirect(url_for('dashboard'))
 
 
     return render_template('signin.html')
+
+
+
+@app.route('/dashboard')
+@login_required
+def dashboard():
+
+    return render_template('dashboard.html')
+
+
+
+
+
+
+
+
 
 
 if __name__ == '__main__':
