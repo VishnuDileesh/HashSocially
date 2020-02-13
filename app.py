@@ -87,6 +87,13 @@ def sign_in():
     return render_template('signin.html')
 
 
+@app.route('/sign-out')
+@login_required
+def sign_out():
+    logout_user()
+
+    return redirect(url_for('index'))
+
 
 @app.route('/dashboard')
 @login_required
