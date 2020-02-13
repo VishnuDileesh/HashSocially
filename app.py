@@ -3,10 +3,16 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required, current_user
 import os
+import requests
+from secrets import *
 
 project_dir = os.path.dirname(os.path.abspath(__file__))
 
 database_file = "sqlite:///{}".format(os.path.join(project_dir, "hashsocially.db"))
+
+API_URL = 'https://api.ritekit.com/v1/stats/auto-hashtag?post='
+
+API_OPTIONS = '&maxHashtags=5&hashtagPosition=auto&client_id='
 
 app = Flask(__name__)
 
@@ -101,6 +107,8 @@ def dashboard():
 
     return render_template('dashboard.html')
 
+
+
 @app.route('/post-text', methods=["POST"])
 @login_required
 def post_text():
@@ -110,6 +118,14 @@ def post_text():
         post_text = request.form["post_text"]
 
         print(post_text)
+
+        post_url = API_URL + post_text + API_OPTIONS + CLIENT_ID
+
+        print(post_url)
+
+        r = requests.get(post_url)
+
+        print(r.content)
 
         return redirect(url_for('dashboard'))
 

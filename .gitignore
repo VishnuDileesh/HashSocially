@@ -27,4 +27,4 @@ venv.back/
 .mypy_cache/
 launchwebproject.sh
 launchworkterminal.sh
-
+secrets.py
