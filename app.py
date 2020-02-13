@@ -101,6 +101,17 @@ def dashboard():
 
     return render_template('dashboard.html')
 
+@app.route('/post-text', methods=["POST"])
+@login_required
+def post_text():
+
+    if request.method == "POST":
+
+        post_text = request.form["post_text"]
+
+        print(post_text)
+
+        return redirect(url_for('dashboard'))
 
 
 
