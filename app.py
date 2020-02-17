@@ -144,7 +144,20 @@ def post_text():
 
         hashtags = tags.findall(data_tags)
 
-        tags = str(hashtags)[1:-1]
+        tags_list = []
+
+        for t in hashtags:
+
+            tag = '#' + t
+
+            tags_list.append(tag)
+
+        tags = str(tags_list)[1:-1]
+
+        tags = str.lower(tags)
+
+
+
 
 
 
