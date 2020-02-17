@@ -145,7 +145,9 @@ def post_text():
 
         print(hashtags)
 
-        new_hash_post = HashPost(hash_text=post_text,hash_tags=hashtags, created_by=current_user.id)
+
+
+        new_hash_post = PostHash(hash_text=post_text,hash_tags=str(hashtags), created_by=current_user.id)
 
         db.session.add(new_hash_post)
         db.session.commit()
