@@ -112,7 +112,10 @@ def sign_out():
 @login_required
 def dashboard():
 
-    return render_template('dashboard.html')
+    post = PostHash.query.filter_by(created_by=current_user.id).all()
+
+
+    return render_template('dashboard.html', data=post)
 
 
 
@@ -124,12 +127,10 @@ def post_text():
 
         post_text = request.form["post_text"]
 
-        print(post_text)
 
        
         post_url = API_URL + post_text + API_OPTIONS + CLIENT_ID
 
-        print(post_url)
 
         r = requests.get(post_url)
 
@@ -143,15 +144,14 @@ def post_text():
 
         hashtags = tags.findall(data_tags)
 
-        print(hashtags)
+        tags = str(hashtags)[1:-1]
 
 
 
-        new_hash_post = PostHash(hash_text=post_text,hash_tags=str(hashtags), created_by=current_user.id)
+        new_hash_post = PostHash(hash_text=post_text,hash_tags=tags, created_by=current_user.id)
 
         db.session.add(new_hash_post)
         db.session.commit()
-
 
 
         return redirect(url_for('dashboard'))

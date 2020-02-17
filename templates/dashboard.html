@@ -18,4 +18,11 @@ Dashboard
 	</form>
 </div>
 
+<div class="container">
+		{% for post in data %}
+		<h3>{{ post.hash_text }}</h3>
+		<p>{{ post.hash_tags }}</p>
+		{% endfor %}
+</div>
+
 {% endblock %}
