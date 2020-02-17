@@ -2,7 +2,7 @@ from flask import Flask, request, render_template, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required, current_user
-import os
+import os, re
 import requests
 from secrets import *
 
@@ -39,6 +39,13 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(1000))
 
 
+class PostHash(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    hash_text = db.Column(db.String(100))
+    hash_tags = db.Column(db.String(100))
+    created_by = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+
 @app.route('/')
 def index():
 
@@ -60,14 +67,14 @@ def sign_up():
 
         hashed_password = generate_password_hash(password, method='sha256')
 
-        print(hashed_password)
 
         new_user = User(username=username, email=email, password=hashed_password)
 
-        print(new_user)
 
         db.session.add(new_user)
         db.session.commit()
+
+        return redirect(url_for('sign_in'))
 
 
     return render_template('signup.html')
@@ -119,13 +126,31 @@ def post_text():
 
         print(post_text)
 
+       
         post_url = API_URL + post_text + API_OPTIONS + CLIENT_ID
 
         print(post_url)
 
         r = requests.get(post_url)
 
-        print(r.content)
+        data = r.json()
+
+        
+        data_tags = data['post']
+
+
+        tags = re.compile(r"#(\w+)")
+
+        hashtags = tags.findall(data_tags)
+
+        print(hashtags)
+
+        new_hash_post = HashPost(hash_text=post_text,hash_tags=hashtags, created_by=current_user.id)
+
+        db.session.add(new_hash_post)
+        db.session.commit()
+
+
 
         return redirect(url_for('dashboard'))
 

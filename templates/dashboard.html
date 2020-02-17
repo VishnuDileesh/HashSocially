@@ -7,14 +7,27 @@ Dashboard
 {% block content %}
 
 <div class="container">
-	<form action="{{ url_for('post_text') }}" method="POST">
+	<form id="postForm">
 		<div class="form-group">
 			<label for="postText">Post Text</label>
-			<textarea type="text" class="form-control" id="postText" name="post_text"></textarea>
+			<textarea type="text" class="form-control" id="postText" name="post_text" placeholder="{% if data %}{{ data.post_text }}{% endif %}"></textarea>
 		</div>
 
-		<button type="submit" class="btn btn-primary">Get Hashtags</button>
+
+		<button type="submit" class="btn btn-primary" onclick="postSubmit(); return false">Get Hashtags</button>
 	</form>
 </div>
+
+<script>
+	function postSubmit(){
+		var postText = document.getElementById("postText").value;
+
+		document.getElementById("postForm").submit();
+
+	
+
+
+	}
+</script>
 
 {% endblock %}
